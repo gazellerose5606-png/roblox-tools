@@ -1,17 +1,18 @@
 import time
 import requests
-from requests.exceptions import RequestException
 
-def retry_request(url, max_retries=3, backoff_factor=0.3):
-    retries = 0
-    while retries < max_retries:
+class RetryException(Exception):
+    pass
+
+def retry_request(url, max_attempts=3, backoff_factor=1.0):
+    attempts = 0
+    while attempts < max_attempts:
         try:
             response = requests.get(url)
             response.raise_for_status()
             return response.json()
-        except RequestException as e:
-            retries += 1
-            wait = backoff_factor * (2 ** (retries - 1))
-            time.sleep(wait)
-            if retries == max_retries:
-                raise RuntimeError(f'Failed to retrieve data from {url} after {max_retries} attempts')
+        except requests.exceptions.RequestException:
+            attempts += 1
+            if attempts == max_attempts:
+                raise RetryException(f'Failed to fetch {url} after {max_attempts} attempts')
+            time.sleep(backoff_factor * (2 ** (attempts - 1)))
