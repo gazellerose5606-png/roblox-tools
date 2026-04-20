@@ -1,18 +1,29 @@
 import json
+import os
 
-DEFAULT_CONFIG = {
-    'username': 'guest',
-    'max_players': 50,
-    'game_mode': 'survival',
-    'show_notifications': True
-}
+class ConfigLoader:
+    def __init__(self, filename, defaults=None):
+        self.filename = filename
+        self.defaults = defaults or {}
+        self.config = self.defaults.copy()
+        self.load_config()
 
-def load_config(file_path):
-    try:
-        with open(file_path, 'r') as config_file:
-            config = json.load(config_file)
-            return {**DEFAULT_CONFIG, **config}
-    except FileNotFoundError:
-        return DEFAULT_CONFIG
-    except json.JSONDecodeError:
-        return DEFAULT_CONFIG
+    def load_config(self):
+        if os.path.exists(self.filename):
+            with open(self.filename, 'r') as file:
+                self.config.update(json.load(file))
+
+    def get(self, key, default=None):
+        return self.config.get(key, default)
+
+    def set(self, key, value):
+        self.config[key] = value
+        self.save_config()
+
+    def save_config(self):
+        with open(self.filename, 'w') as file:
+            json.dump(self.config, file, indent=4)
+
+# Example usage:
+# loader = ConfigLoader('config.json', {'setting1': 'default_value'})
+# print(loader.get('setting1'))
