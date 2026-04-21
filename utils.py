@@ -1,18 +1,33 @@
-import time
-import requests
+import json
 
-class RetryException(Exception):
-    pass
+def load_json(file_path):
+    with open(file_path, 'r') as file:
+        return json.load(file)
 
-def retry_request(url, max_attempts=3, backoff_factor=1.0):
-    attempts = 0
-    while attempts < max_attempts:
-        try:
-            response = requests.get(url)
-            response.raise_for_status()
-            return response.json()
-        except requests.exceptions.RequestException:
-            attempts += 1
-            if attempts == max_attempts:
-                raise RetryException(f'Failed to fetch {url} after {max_attempts} attempts')
-            time.sleep(backoff_factor * (2 ** (attempts - 1)))
+
+def save_json(file_path, data):
+    with open(file_path, 'w') as file:
+        json.dump(data, file, indent=4)
+
+
+def validate_data(schema, data):
+    from jsonschema import validate, ValidationError
+    try:
+        validate(instance=data, schema=schema)
+    except ValidationError as e:
+        return e.message
+    return None
+
+
+def pretty_print_json(data):
+    print(json.dumps(data, indent=4))
+
+
+def merge_dicts(dict1, dict2):
+    result = dict1.copy()
+    result.update(dict2)
+    return result
+
+
+def flatten_list(nested_list):
+    return [item for sublist in nested_list for item in sublist]
