@@ -1,38 +1,43 @@
-MAX_PLAYERS = 100
+from typing import Dict, Any
 
-DEFAULT_GAME_MODE = 'Classic'
+# Constants related to Roblox API endpoints.
+BASE_URL: str = 'https://api.roblox.com'
 
-NETWORK_TIMEOUT = 30
-
-ITEM_TYPES = {
-    'weapon': 'Weapon',
-    'armor': 'Armor',
-    'potion': 'Potion'
+ENDPOINTS: Dict[str, str] = {
+    'GET_USER': f'{BASE_URL}/users/',
+    'GET_GAME': f'{BASE_URL}/games/',
+    'GET_ASSET': f'{BASE_URL}/assets/',
 }
 
-RANKS = {
-    'guest': 1,
-    'newbie': 2,
-    'advanced': 3,
-    'pro': 4
-}
+# Default values for configurations.
+DEFAULT_PAGE_SIZE: int = 20
+DEFAULT_TIMEOUT: int = 5
 
-COLORS = {
-    'red': '#FF0000',
-    'green': '#00FF00',
-    'blue': '#0000FF',
-    'yellow': '#FFFF00'
-}
+def get_endpoint(name: str) -> str:
+    """Retrieve the URL for a specific API endpoint.
 
-LEVEL_REQUIREMENTS = {
-    1: 0,
-    2: 100,
-    3: 250,
-    4: 500
-}
+    Args:
+        name (str): The name of the endpoint.
 
-ITEM_LIMITS = {
-    'maxWeapons': 5,
-    'maxArmors': 3,
-    'maxPotions': 10
-}
+    Returns:
+        str: The URL of the specified endpoint, raises KeyError if not found.
+    """
+    if name not in ENDPOINTS:
+        raise KeyError(f'Endpoint {name} not found.')
+    return ENDPOINTS[name]
+
+def get_default_page_size() -> int:
+    """Get the default page size for pagination.
+
+    Returns:
+        int: The default page size.
+    """
+    return DEFAULT_PAGE_SIZE
+
+def get_default_timeout() -> int:
+    """Get the default timeout duration in seconds.
+
+    Returns:
+        int: The default timeout duration.
+    """
+    return DEFAULT_TIMEOUT
