@@ -1,15 +1,25 @@
 import time
-import requests
-from requests.exceptions import RequestException
 
-def retry_request(url, max_retries=3, backoff_factor=0.3):
-    for attempt in range(max_retries):
-        try:
-            response = requests.get(url)
-            response.raise_for_status()
-            return response.json()
-        except RequestException:
-            if attempt < max_retries - 1:
-                time.sleep(backoff_factor * (2 ** attempt))
-            else:
-                raise
+def time_it(func):
+    def wrapper(*args, **kwargs):
+        start_time = time.perf_counter()
+        result = func(*args, **kwargs)
+        end_time = time.perf_counter()
+        print(f"{func.__name__} executed in {end_time - start_time:.4f} seconds")
+        return result
+    return wrapper
+
+@time_it
+def optimized_function(data):
+    return {key: value for key, value in data.items() if value is not None}
+
+@time_it
+def process_data(data):
+    results = []
+    for item in data:
+        results.append(optimized_function(item))
+    return results
+
+@time_it
+def main(data_collection):
+    return process_data(data_collection)
