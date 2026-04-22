@@ -1,25 +1,27 @@
-import time
+import json
+import os
 
-def time_it(func):
-    def wrapper(*args, **kwargs):
-        start_time = time.perf_counter()
-        result = func(*args, **kwargs)
-        end_time = time.perf_counter()
-        print(f"{func.__name__} executed in {end_time - start_time:.4f} seconds")
-        return result
-    return wrapper
+def load_data(file_path):
+    if not os.path.exists(file_path):
+        raise FileNotFoundError(f"{file_path} does not exist")
+    with open(file_path, 'r') as file:
+        return json.load(file)
 
-@time_it
-def optimized_function(data):
-    return {key: value for key, value in data.items() if value is not None}
 
-@time_it
-def process_data(data):
-    results = []
-    for item in data:
-        results.append(optimized_function(item))
-    return results
+def save_data(file_path, data):
+    with open(file_path, 'w') as file:
+        json.dump(data, file, indent=4)
 
-@time_it
-def main(data_collection):
-    return process_data(data_collection)
+
+def update_data(file_path, update):
+    data = load_data(file_path)
+    data.update(update)
+    save_data(file_path, data)
+
+
+def filter_data(data, condition):
+    return [item for item in data if condition(item)]
+
+
+def get_value(data, key, default=None):
+    return data.get(key, default)
