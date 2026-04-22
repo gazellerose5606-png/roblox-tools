@@ -1,27 +1,44 @@
-import json
-import os
+import random
 
-def load_data(file_path):
-    if not os.path.exists(file_path):
-        raise FileNotFoundError(f"{file_path} does not exist")
-    with open(file_path, 'r') as file:
-        return json.load(file)
+class Player:
+    def __init__(self, name, health=100):
+        self.name = name
+        self.health = health
+        self.inventory = []
 
+    def take_damage(self, amount):
+        self.health -= amount
+        if self.health < 0:
+            self.health = 0
 
-def save_data(file_path, data):
-    with open(file_path, 'w') as file:
-        json.dump(data, file, indent=4)
+    def heal(self, amount):
+        self.health += amount
 
+    def add_item(self, item):
+        self.inventory.append(item)
 
-def update_data(file_path, update):
-    data = load_data(file_path)
-    data.update(update)
-    save_data(file_path, data)
+    def remove_item(self, item):
+        if item in self.inventory:
+            self.inventory.remove(item)
 
+    def is_alive(self):
+        return self.health > 0
 
-def filter_data(data, condition):
-    return [item for item in data if condition(item)]
+class Game:
+    def __init__(self):
+        self.players = []
 
+    def add_player(self, name):
+        player = Player(name)
+        self.players.append(player)
 
-def get_value(data, key, default=None):
-    return data.get(key, default)
+    def random_event(self):
+        for player in self.players:
+            if random.choice([True, False]):
+                damage = random.randint(5, 20)
+                player.take_damage(damage)
+
+    def show_status(self):
+        for player in self.players:
+            status = 'Alive' if player.is_alive() else 'Dead'
+            print(f'{player.name}: Health={player.health}, Status={status}')
