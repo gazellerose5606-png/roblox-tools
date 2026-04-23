@@ -1,44 +1,28 @@
-import random
+def get_user_id(username, user_data):
+    for user in user_data:
+        if user['username'] == username:
+            return user['id']
+    return None
 
-class Player:
-    def __init__(self, name, health=100):
-        self.name = name
-        self.health = health
-        self.inventory = []
+def calculate_playtime(start_time, end_time):
+    return (end_time - start_time).seconds
 
-    def take_damage(self, amount):
-        self.health -= amount
-        if self.health < 0:
-            self.health = 0
+def format_user_data(user):
+    return {
+        'id': user['id'],
+        'username': user['username'],
+        'status': user['status']
+    }
 
-    def heal(self, amount):
-        self.health += amount
+def filter_active_users(user_data):
+    return [user for user in user_data if user['status'] == 'active']
 
-    def add_item(self, item):
-        self.inventory.append(item)
+import json
 
-    def remove_item(self, item):
-        if item in self.inventory:
-            self.inventory.remove(item)
+def load_json_file(filepath):
+    with open(filepath, 'r') as file:
+        return json.load(file)
 
-    def is_alive(self):
-        return self.health > 0
-
-class Game:
-    def __init__(self):
-        self.players = []
-
-    def add_player(self, name):
-        player = Player(name)
-        self.players.append(player)
-
-    def random_event(self):
-        for player in self.players:
-            if random.choice([True, False]):
-                damage = random.randint(5, 20)
-                player.take_damage(damage)
-
-    def show_status(self):
-        for player in self.players:
-            status = 'Alive' if player.is_alive() else 'Dead'
-            print(f'{player.name}: Health={player.health}, Status={status}')
+def save_json_file(filepath, data):
+    with open(filepath, 'w') as file:
+        json.dump(data, file, indent=4)
