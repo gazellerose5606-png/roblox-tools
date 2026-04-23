@@ -1,25 +1,33 @@
-import time
 import json
+import logging
 
-class DataProcessor:
+class Processor:
     def __init__(self, data):
         self.data = data
+        self.results = []
+        self.logger = logging.getLogger(__name__)
 
-    def optimize_data(self):
-        start_time = time.time()
-        optimized_data = {k: v for k, v in self.data.items() if v}
-        end_time = time.time()
-        print(f"Optimization took {end_time - start_time:.4f} seconds")
-        return optimized_data
+    def process(self):
+        try:
+            self.validate_data()
+            self.results = [self.process_item(item) for item in self.data]
+        except ValueError as ve:
+            self.logger.error(f'ValueError occurred: {ve}')
+        except TypeError as te:
+            self.logger.error(f'TypeError occurred: {te}')
+        except Exception as e:
+            self.logger.error(f'Unexpected error: {e}')
 
-    def process_data(self):
-        optimized_data = self.optimize_data()
-        # Simulate data processing
-        processed_data = json.dumps(optimized_data)
-        return processed_data
+    def validate_data(self):
+        if not isinstance(self.data, list):
+            raise TypeError('Data should be a list')
+        if not self.data:
+            raise ValueError('Data list is empty')
 
-if __name__ == '__main__':
-    raw_data = {'key1': 'value1', 'key2': None, 'key3': 'value3'}
-    processor = DataProcessor(raw_data)
-    result = processor.process_data()
-    print(result)
+    def process_item(self, item):
+        if not isinstance(item, dict):
+            raise ValueError('Each item must be a dictionary')
+        return {k: v for k, v in item.items() if v is not None}
+
+    def get_results(self):
+        return json.dumps(self.results)
