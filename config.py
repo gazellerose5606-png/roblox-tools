@@ -1,28 +1,25 @@
 import json
 import os
 
-DEFAULT_CONFIG = {
-    'api_key': 'your_api_key',
-    'timeout': 30,
-    'retries': 3,
-    'log_level': 'INFO'
-}
-
 class ConfigLoader:
-    def __init__(self, filename='config.json'):
-        self.filename = filename
+    def __init__(self, default_config):
+        self.default_config = default_config
         self.config = self.load_config()
 
     def load_config(self):
-        if os.path.exists(self.filename):
-            with open(self.filename, 'r') as file:
-                return json.load(file)
-        return DEFAULT_CONFIG
+        config_path = os.getenv('CONFIG_PATH', 'config.json')
+        if os.path.exists(config_path):
+            with open(config_path, 'r') as file:
+                user_config = json.load(file)
+            return {**self.default_config, **user_config}
+        return self.default_config
 
     def get(self, key):
-        return self.config.get(key, DEFAULT_CONFIG.get(key))
+        return self.config.get(key)
 
-    def set(self, key, value):
-        self.config[key] = value
-        with open(self.filename, 'w') as file:
-            json.dump(self.config, file, indent=4)
+# Example usage
+if __name__ == '__main__':
+    defaults = {'setting1': 'default_value1', 'setting2': 'default_value2'}
+    config_loader = ConfigLoader(defaults)
+    print(config_loader.get('setting1'))
+    print(config_loader.get('setting2'))
