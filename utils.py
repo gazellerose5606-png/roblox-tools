@@ -4,17 +4,15 @@ import requests
 class NetworkError(Exception):
     pass
 
-def retry_request(method, url, **kwargs):
-    retries = 5
-    delay = 2
-    for i in range(retries):
+def retry_request(url, retries=3, delay=2):
+    attempt = 0
+    while attempt < retries:
         try:
-            response = requests.request(method, url, **kwargs)
+            response = requests.get(url)
             response.raise_for_status()
-            return response
+            return response.json()
         except requests.RequestException:
-            if i < retries - 1:
-                time.sleep(delay)
-                delay *= 2
-            else:
-                raise NetworkError(f'Failed to connect after {retries} attempts')
+            attempt += 1
+            if attempt == retries:
+                raise NetworkError(f'Failed to fetch data from {url} after {retries} attempts')
+            time.sleep(delay)
