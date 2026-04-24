@@ -1,35 +1,20 @@
 import logging
-from constants import DEFAULT_TIMEOUT
-from exceptions import TimeoutError
+from exceptions import CustomException
+from utils import validate_input, process_data
 
-class RequestHandler:
-    def __init__(self, resource_url):
-        self.resource_url = resource_url
-        self.timeout = DEFAULT_TIMEOUT
-        self.logger = self._setup_logger()
+class Handler:
+    def __init__(self, data):
+        self.data = data
 
-    def _setup_logger(self):
-        logger = logging.getLogger(__name__)
-        handler = logging.StreamHandler()
-        formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
-        handler.setFormatter(formatter)
-        logger.addHandler(handler)
-        logger.setLevel(logging.INFO)
-        return logger
-
-    def fetch_data(self):
+    def handle(self):
         try:
-            response = self._simulate_request()
-            return response
-        except TimeoutError:
-            self.logger.error('Request timed out')
+            if validate_input(self.data):
+                result = process_data(self.data)
+                self.log_result(result)
+            else:
+                raise CustomException("Invalid input")
+        except CustomException as e:
+            logging.error(f'Error: {e}')
 
-    def _simulate_request(self):
-        import random
-        if random.choice([True, False]):
-            raise TimeoutError('Simulated timeout')
-        return {'data': 'Sample data from ' + self.resource_url}
-
-if __name__ == '__main__':
-    handler = RequestHandler('https://api.example.com/data')
-    print(handler.fetch_data())
+    def log_result(self, result):
+        logging.info(f'Processing result: {result}')
