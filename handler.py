@@ -1,34 +1,51 @@
-import asyncio
-from typing import Any, Dict, Optional, Tuple
+from typing import Any, Dict, Optional
 
 class RobloxHandler:
-    """Handles Roblox game-related operations."""
-    
-    def __init__(self, game_id: int) -> None:
-        """Initialize handler with game ID."""
-        self.game_id = game_id
-        self.data: Optional[Dict[str, Any]] = None
+    def __init__(self, api_key: str) -> None:
+        self.api_key = api_key
+        self.base_url = 'https://api.roblox.com'
 
-    async def fetch_game_data(self) -> None:
-        """Asynchronously fetch the game data."""
-        self.data = await self._simulate_fetch(self.game_id)
+    def get_user_info(self, user_id: int) -> Optional[Dict[str, Any]]:
+        """Fetch user information by user ID.
 
-    async def _simulate_fetch(self, game_id: int) -> Dict[str, Any]:
-        """Simulate fetching game data from an API."""
-        await asyncio.sleep(1)
-        return {'id': game_id, 'name': f'Game {game_id}', 'players': 42}
+        Args:
+            user_id (int): The ID of the user.
 
-    def get_game_info(self) -> Optional[Tuple[int, str, int]]:
-        """Return game information such as ID, name, and player count."""
-        if self.data:
-            return self.data['id'], self.data['name'], self.data['players']
+        Returns:
+            Optional[Dict[str, Any]]: User information if found, otherwise None.
+        """
+        import requests
+        response = requests.get(f'{self.base_url}/users/{user_id}')
+        if response.status_code == 200:
+            return response.json()
         return None
 
-# Example usage
-# async def main():
-#     handler = RobloxHandler(1234)
-#     await handler.fetch_game_data()
-#     info = handler.get_game_info()
-#     print(info)
+    def get_game_info(self, game_id: int) -> Optional[Dict[str, Any]]:
+        """Fetch game information by game ID.
 
-# asyncio.run(main())
+        Args:
+            game_id (int): The ID of the game.
+
+        Returns:
+            Optional[Dict[str, Any]]: Game information if found, otherwise None.
+        """
+        import requests
+        response = requests.get(f'{self.base_url}/games/{game_id}')
+        if response.status_code == 200:
+            return response.json()
+        return None
+
+    def create_game(self, data: Dict[str, Any]) -> Optional[Dict[str, Any]]:
+        """Create a new game with given data.
+
+        Args:
+            data (Dict[str, Any]): Data for the new game.
+
+        Returns:
+            Optional[Dict[str, Any]]: Created game information if successful, otherwise None.
+        """
+        import requests
+        response = requests.post(f'{self.base_url}/games', json=data, headers={'Authorization': f'Bearer {self.api_key}'})
+        if response.status_code == 201:
+            return response.json()
+        return None
