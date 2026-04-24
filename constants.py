@@ -1,43 +1,25 @@
-from typing import Dict, Any
+from typing import Final
 
-# Constants related to Roblox API endpoints.
-BASE_URL: str = 'https://api.roblox.com'
+BASE_URL: Final[str] = "https://www.roblox.com"
+API_VERSION: Final[int] = 1
+DEFAULT_TIMEOUT: Final[int] = 30
 
-ENDPOINTS: Dict[str, str] = {
-    'GET_USER': f'{BASE_URL}/users/',
-    'GET_GAME': f'{BASE_URL}/games/',
-    'GET_ASSET': f'{BASE_URL}/assets/',
-}
+class GameStatus:
+    ACTIVE: Final[str] = "active"
+    INACTIVE: Final[str] = "inactive"
+    MAINTENANCE: Final[str] = "maintenance"
 
-# Default values for configurations.
-DEFAULT_PAGE_SIZE: int = 20
-DEFAULT_TIMEOUT: int = 5
+class UserRoles:
+    ADMIN: Final[str] = "admin"
+    MODERATOR: Final[str] = "moderator"
+    PLAYER: Final[str] = "player"
 
-def get_endpoint(name: str) -> str:
-    """Retrieve the URL for a specific API endpoint.
+class ErrorMessages:
+    USER_NOT_FOUND: Final[str] = "User not found"
+    GAME_NOT_FOUND: Final[str] = "Game not found"
+    INVALID_REQUEST: Final[str] = "Invalid request"
 
-    Args:
-        name (str): The name of the endpoint.
-
-    Returns:
-        str: The URL of the specified endpoint, raises KeyError if not found.
-    """
-    if name not in ENDPOINTS:
-        raise KeyError(f'Endpoint {name} not found.')
-    return ENDPOINTS[name]
-
-def get_default_page_size() -> int:
-    """Get the default page size for pagination.
-
-    Returns:
-        int: The default page size.
-    """
-    return DEFAULT_PAGE_SIZE
-
-def get_default_timeout() -> int:
-    """Get the default timeout duration in seconds.
-
-    Returns:
-        int: The default timeout duration.
-    """
-    return DEFAULT_TIMEOUT
+class Config:
+    RETRY_ATTEMPTS: Final[int] = 3
+    MAX_CONNECTIONS: Final[int] = 10
+    REQUEST_TIMEOUT: Final[int] = 15
