@@ -1,51 +1,35 @@
-from typing import Any, Dict, Optional
+import logging
+from constants import DEFAULT_TIMEOUT
+from exceptions import TimeoutError
 
-class RobloxHandler:
-    def __init__(self, api_key: str) -> None:
-        self.api_key = api_key
-        self.base_url = 'https://api.roblox.com'
+class RequestHandler:
+    def __init__(self, resource_url):
+        self.resource_url = resource_url
+        self.timeout = DEFAULT_TIMEOUT
+        self.logger = self._setup_logger()
 
-    def get_user_info(self, user_id: int) -> Optional[Dict[str, Any]]:
-        """Fetch user information by user ID.
+    def _setup_logger(self):
+        logger = logging.getLogger(__name__)
+        handler = logging.StreamHandler()
+        formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
+        handler.setFormatter(formatter)
+        logger.addHandler(handler)
+        logger.setLevel(logging.INFO)
+        return logger
 
-        Args:
-            user_id (int): The ID of the user.
+    def fetch_data(self):
+        try:
+            response = self._simulate_request()
+            return response
+        except TimeoutError:
+            self.logger.error('Request timed out')
 
-        Returns:
-            Optional[Dict[str, Any]]: User information if found, otherwise None.
-        """
-        import requests
-        response = requests.get(f'{self.base_url}/users/{user_id}')
-        if response.status_code == 200:
-            return response.json()
-        return None
+    def _simulate_request(self):
+        import random
+        if random.choice([True, False]):
+            raise TimeoutError('Simulated timeout')
+        return {'data': 'Sample data from ' + self.resource_url}
 
-    def get_game_info(self, game_id: int) -> Optional[Dict[str, Any]]:
-        """Fetch game information by game ID.
-
-        Args:
-            game_id (int): The ID of the game.
-
-        Returns:
-            Optional[Dict[str, Any]]: Game information if found, otherwise None.
-        """
-        import requests
-        response = requests.get(f'{self.base_url}/games/{game_id}')
-        if response.status_code == 200:
-            return response.json()
-        return None
-
-    def create_game(self, data: Dict[str, Any]) -> Optional[Dict[str, Any]]:
-        """Create a new game with given data.
-
-        Args:
-            data (Dict[str, Any]): Data for the new game.
-
-        Returns:
-            Optional[Dict[str, Any]]: Created game information if successful, otherwise None.
-        """
-        import requests
-        response = requests.post(f'{self.base_url}/games', json=data, headers={'Authorization': f'Bearer {self.api_key}'})
-        if response.status_code == 201:
-            return response.json()
-        return None
+if __name__ == '__main__':
+    handler = RequestHandler('https://api.example.com/data')
+    print(handler.fetch_data())
