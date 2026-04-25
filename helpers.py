@@ -1,24 +1,24 @@
-import json
+import time
+import requests
+from functools import wraps
 
-def load_roblox_data(file_path):
-    with open(file_path, 'r') as file:
-        data = json.load(file)
-    return data
+def retry(max_retries=3, delay=1):
+    def decorator(func):
+        @wraps(func)
+        def wrapper(*args, **kwargs):
+            for attempt in range(max_retries):
+                try:
+                    return func(*args, **kwargs)
+                except requests.RequestException as e:
+                    if attempt < max_retries - 1:
+                        time.sleep(delay)
+                    else:
+                        raise e
+        return wrapper
+    return decorator
 
-
-def save_roblox_data(file_path, data):
-    with open(file_path, 'w') as file:
-        json.dump(data, file, indent=4)
-
-
-def get_value(data, key, default=None):
-    return data.get(key, default)
-
-
-def set_value(data, key, value):
-    data[key] = value
-
-
-def delete_key(data, key):
-    if key in data:
-        del data[key]
+@retry(max_retries=5, delay=2)
+def fetch_data(url):
+    response = requests.get(url)
+    response.raise_for_status()
+    return response.json()
