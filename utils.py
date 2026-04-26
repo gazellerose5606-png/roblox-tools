@@ -1,29 +1,30 @@
-import json
 import requests
 
-class RobloxAPI:
-    BASE_URL = 'https://api.roblox.com/'
+BASE_URL = 'https://api.roblox.com/'
 
-    @staticmethod
-    def get_user_info(user_id):
-        response = requests.get(f'{RobloxAPI.BASE_URL}users/{user_id}')
-        response.raise_for_status()
-        return response.json()
 
-    @staticmethod
-    def get_asset_info(asset_id):
-        response = requests.get(f'{RobloxAPI.BASE_URL}assets/{asset_id}')
-        response.raise_for_status()
-        return response.json()
+def fetch_roblox_data(endpoint):
+    response = requests.get(f'{BASE_URL}{endpoint}')
+    response.raise_for_status()
+    return response.json()
 
-    @staticmethod
-    def format_data(data):
-        return json.dumps(data, indent=4)
 
-    @staticmethod
-    def save_to_file(data, filename):
-        with open(filename, 'w') as file:
-            file.write(RobloxAPI.format_data(data))
+def get_user_info(user_id):
+    try:
+        return fetch_roblox_data(f'users/{user_id}')
+    except requests.RequestException as e:
+        return {'error': str(e)}
 
-user_info = RobloxAPI.get_user_info(1)
-RobloxAPI.save_to_file(user_info, 'user_info.json')
+
+def get_game_info(game_id):
+    try:
+        return fetch_roblox_data(f'games/{game_id}')
+    except requests.RequestException as e:
+        return {'error': str(e)}
+
+
+def get_asset_info(asset_id):
+    try:
+        return fetch_roblox_data(f'assets/{asset_id}')
+    except requests.RequestException as e:
+        return {'error': str(e)}
