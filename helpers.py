@@ -1,20 +1,35 @@
-import requests
+import time
 
-class RobloxUser:
-    def __init__(self, user_id):
-        self.user_id = user_id
-        self.api_url = f'https://users.roblox.com/v1/users/{self.user_id}'
+def timeit(func):
+    def wrapper(*args, **kwargs):
+        start = time.perf_counter()
+        result = func(*args, **kwargs)
+        end = time.perf_counter()
+        print(f'Function {func.__name__} executed in {{end - start}} seconds.')
+        return result
+    return wrapper
 
-    def get_user_info(self):
-        response = requests.get(self.api_url)
-        if response.status_code == 200:
-            return response.json()
-        return None
+@timeit
+def fibonacci(n):
+    a, b = 0, 1
+    for _ in range(n):
+        a, b = b, a + b
+    return a
 
-def format_user_info(user_info):
-    if user_info:
-        return f'Username: {user_info.get("name", "Unknown")}\nID: {user_info.get("id", "Unknown")}\nStatus: {user_info.get("description", "No status")}'
-    return 'User not found.'
+@timeit
+def factorial(n):
+    if n == 0:
+        return 1
+    result = 1
+    for i in range(1, n + 1):
+        result *= i
+    return result
 
-def is_valid_user_id(user_id):
-    return isinstance(user_id, int) and user_id > 0
+@timeit
+def sum_numbers(numbers):
+    return sum(numbers)
+
+if __name__ == '__main__':
+    print(fibonacci(35))
+    print(factorial(10))
+    print(sum_numbers(range(1000000)))
