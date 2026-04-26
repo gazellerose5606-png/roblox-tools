@@ -1,20 +1,30 @@
-import logging
-from exceptions import CustomException
-from utils import validate_input, process_data
+import json
+import requests
 
-class Handler:
-    def __init__(self, data):
-        self.data = data
+class RobloxDataHandler:
+    BASE_URL = 'https://api.roblox.com/'
 
-    def handle(self):
-        try:
-            if validate_input(self.data):
-                result = process_data(self.data)
-                self.log_result(result)
-            else:
-                raise CustomException("Invalid input")
-        except CustomException as e:
-            logging.error(f'Error: {e}')
+    @staticmethod
+    def fetch_data(endpoint):
+        response = requests.get(RobloxDataHandler.BASE_URL + endpoint)
+        response.raise_for_status()
+        return response.json()
 
-    def log_result(self, result):
-        logging.info(f'Processing result: {result}')
+    @staticmethod
+    def get_user_info(user_id):
+        endpoint = f'users/{user_id}'
+        return RobloxDataHandler.fetch_data(endpoint)
+
+    @staticmethod
+    def get_game_info(game_id):
+        endpoint = f'games/{game_id}'
+        return RobloxDataHandler.fetch_data(endpoint)
+
+    @staticmethod
+    def get_asset_info(asset_id):
+        endpoint = f'assets/{asset_id}'
+        return RobloxDataHandler.fetch_data(endpoint)
+
+if __name__ == '__main__':
+    user_info = RobloxDataHandler.get_user_info(123456)
+    print(json.dumps(user_info, indent=2))
