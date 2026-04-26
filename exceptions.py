@@ -1,18 +1,29 @@
 class RobloxError(Exception):
+    """Base class for other exceptions."""
     pass
 
-class NotFoundError(RobloxError):
-    def __init__(self, message="Resource not found."):
-        self.message = message
-        super().__init__(self.message)
+class InvalidAssetIDError(RobloxError):
+    """Raised when an asset ID is invalid."""
+    def __init__(self, asset_id):
+        self.asset_id = asset_id
+        super().__init__(f'Invalid asset ID: {self.asset_id}')
 
-class InvalidParameterError(RobloxError):
-    def __init__(self, param, message="Invalid parameter passed."):
-        self.param = param
-        self.message = f"{message} Parameter: {self.param}"
-        super().__init__(self.message)
+class AssetNotFoundError(RobloxError):
+    """Raised when an asset is not found."""
+    def __init__(self, asset_id):
+        self.asset_id = asset_id
+        super().__init__(f'Asset not found: {self.asset_id}')
 
-class PermissionError(RobloxError):
-    def __init__(self, message="Insufficient permissions."):
-        self.message = message
-        super().__init__(self.message)
+class RateLimitExceededError(RobloxError):
+    """Raised when API rate limits are exceeded."""
+    pass
+
+class AuthenticationError(RobloxError):
+    """Raised when authentication fails."""
+    def __init__(self, message):
+        super().__init__(message)
+
+class NetworkError(RobloxError):
+    """Raised for network-related issues."""
+    def __init__(self, message):
+        super().__init__(message)
