@@ -1,31 +1,25 @@
-import json
 import re
 
-def is_valid_username(username: str) -> bool:
-    return bool(re.match(r'^[a-zA-Z][a-zA-Z0-9_]{2,19}$', username))
+def validate_username(username):
+    if not isinstance(username, str) or not username:
+        raise ValueError('Username must be a non-empty string')
+    if len(username) < 3 or len(username) > 20:
+        raise ValueError('Username must be between 3 and 20 characters')
+    if not re.match('^[A-Za-z0-9_]+$', username):
+        raise ValueError('Username must only contain alphanumeric characters and underscores')
 
 
-def is_valid_user_id(user_id: int) -> bool:
-    return isinstance(user_id, int) and user_id > 0
+def validate_password(password):
+    if not isinstance(password, str) or len(password) < 8:
+        raise ValueError('Password must be at least 8 characters long')
+    if not re.search('[A-Z]', password) or not re.search('[a-z]', password):
+        raise ValueError('Password must contain both uppercase and lowercase letters')
+    if not re.search('[0-9]', password):
+        raise ValueError('Password must contain at least one digit')
 
 
-def is_valid_place_id(place_id: int) -> bool:
-    return isinstance(place_id, int) and place_id > 0
-
-
-def is_valid_asset_id(asset_id: int) -> bool:
-    return isinstance(asset_id, int) and asset_id > 0
-
-
-def validate_robot_data(data: str) -> dict:
-    try:
-        decoded_data = json.loads(data)
-        if 'username' in decoded_data and not is_valid_username(decoded_data['username']):
-            raise ValueError('Invalid username')
-        if 'user_id' in decoded_data and not is_valid_user_id(decoded_data['user_id']):
-            raise ValueError('Invalid user ID')
-        if 'place_id' in decoded_data and not is_valid_place_id(decoded_data['place_id']):
-            raise ValueError('Invalid place ID')
-        return decoded_data
-    except (ValueError, json.JSONDecodeError) as e:
-        raise ValueError(f'Invalid data: {e}')
+def validate_email(email):
+    if not isinstance(email, str) or not email:
+        raise ValueError('Email must be a non-empty string')
+    if not re.match('[^@]+@[^@]+\.[^@]+', email):
+        raise ValueError('Email is not valid')
