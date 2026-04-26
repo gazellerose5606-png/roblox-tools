@@ -1,30 +1,27 @@
-import requests
+import os
+import json
+from typing import Any, Dict, List
 
-BASE_URL = 'https://api.roblox.com/'
-
-
-def fetch_roblox_data(endpoint):
-    response = requests.get(f'{BASE_URL}{endpoint}')
-    response.raise_for_status()
-    return response.json()
+def save_to_json(file_path: str, data: Dict[str, Any]) -> None:
+    with open(file_path, 'w') as f:
+        json.dump(data, f, indent=4)
 
 
-def get_user_info(user_id):
-    try:
-        return fetch_roblox_data(f'users/{user_id}')
-    except requests.RequestException as e:
-        return {'error': str(e)}
+def load_from_json(file_path: str) -> Dict[str, Any]:
+    if not os.path.exists(file_path):
+        return {}
+    with open(file_path, 'r') as f:
+        return json.load(f)
 
 
-def get_game_info(game_id):
-    try:
-        return fetch_roblox_data(f'games/{game_id}')
-    except requests.RequestException as e:
-        return {'error': str(e)}
+def flatten_list(nested_list: List[List[Any]]) -> List[Any]:
+    return [item for sublist in nested_list for item in sublist]
 
 
-def get_asset_info(asset_id):
-    try:
-        return fetch_roblox_data(f'assets/{asset_id}')
-    except requests.RequestException as e:
-        return {'error': str(e)}
+def get_file_extension(file_name: str) -> str:
+    return os.path.splitext(file_name)[1]
+
+
+def read_file_lines(file_path: str) -> List[str]:
+    with open(file_path, 'r') as f:
+        return f.readlines()
