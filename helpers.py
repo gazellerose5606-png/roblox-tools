@@ -1,24 +1,20 @@
-import time
 import requests
-from functools import wraps
 
-def retry(max_retries=3, delay=1):
-    def decorator(func):
-        @wraps(func)
-        def wrapper(*args, **kwargs):
-            for attempt in range(max_retries):
-                try:
-                    return func(*args, **kwargs)
-                except requests.RequestException as e:
-                    if attempt < max_retries - 1:
-                        time.sleep(delay)
-                    else:
-                        raise e
-        return wrapper
-    return decorator
+class RobloxUser:
+    def __init__(self, user_id):
+        self.user_id = user_id
+        self.api_url = f'https://users.roblox.com/v1/users/{self.user_id}'
 
-@retry(max_retries=5, delay=2)
-def fetch_data(url):
-    response = requests.get(url)
-    response.raise_for_status()
-    return response.json()
+    def get_user_info(self):
+        response = requests.get(self.api_url)
+        if response.status_code == 200:
+            return response.json()
+        return None
+
+def format_user_info(user_info):
+    if user_info:
+        return f'Username: {user_info.get("name", "Unknown")}\nID: {user_info.get("id", "Unknown")}\nStatus: {user_info.get("description", "No status")}'
+    return 'User not found.'
+
+def is_valid_user_id(user_id):
+    return isinstance(user_id, int) and user_id > 0
