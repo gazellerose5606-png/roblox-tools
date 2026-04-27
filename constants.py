@@ -1,24 +1,26 @@
-SCREEN_WIDTH = 800
-SCREEN_HEIGHT = 600
-FPS = 60
-PLAYER_START_X = 100
-PLAYER_START_Y = 100
-MAX_PLAYERS = 10
-GAME_TITLE = 'Roblox Game'
+from typing import Final
 
-# Colors
-BLACK = (0, 0, 0)
-WHITE = (255, 255, 255)
-RED = (255, 0, 0)
-GREEN = (0, 255, 0)
-BLUE = (0, 0, 255)
+VERSION: Final[str] = '1.0.0'
+DEFAULT_TIMEOUT: Final[int] = 30
+MAX_RETRIES: Final[int] = 5
+API_URL: Final[str] = 'https://api.roblox.com/'
 
-# Asset Paths
-PLAYER_SPRITE_PATH = 'assets/player.png'
-ENEMY_SPRITE_PATH = 'assets/enemy.png'
-BACKGROUND_IMAGE_PATH = 'assets/background.png'
+COLORS: Final[dict] = {
+    'red': '#FF0000',
+    'green': '#00FF00',
+    'blue': '#0000FF',
+}
 
-# Game States
-MAIN_MENU = 'main_menu'
-PLAYING = 'playing'
-GAME_OVER = 'game_over'
+PLAYER_STATUSES: Final[list] = [
+    'Offline',
+    'Online',
+    'In-Game',
+    'Busy',
+]
+
+ROLE_IDS: Final[dict] = {
+    'Admin': 1,
+    'Mod': 2,
+    'User': 3,
+}
+
