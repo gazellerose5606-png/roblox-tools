@@ -1,17 +1,17 @@
 # Roblox Tools
 
-Roblox Tools is a Python library designed to streamline various tasks for developers creating games and experiences on the Roblox platform. This toolkit provides essential functionalities for automating processes and integrating with Roblox's services, making game development more efficient and enjoyable.
+Roblox Tools is a Python library designed to simplify the automation of various tasks within the Roblox gaming ecosystem. Whether you’re developing games or managing virtual assets, this library offers a set of powerful tools to enhance your productivity.
 
 ## Features
 
-- **Asset Management**: Easily upload, update, and manage assets such as images, models, and audio files directly from your Python scripts.
-- **Game Analytics**: Retrieve and analyze game performance metrics using built-in functions to facilitate data-driven decision-making.
-- **User Interaction**: Simulate user interactions in your games for testing behaviors and optimizing game experiences without manual playthroughs.
-- **API Integration**: Seamlessly connect and interact with the Roblox API, enabling developers to access game data and user information programmatically.
+- **Batch Asset Downloading**: Retrieve multiple assets from Roblox in a single command to streamline your development workflow.
+- **API Interaction**: Easily connect and interact with Roblox’s HTTP APIs, allowing for seamless data retrieval and manipulation.
+- **Game Statistics Retrieval**: Fetch real-time stats about any Roblox game, including player counts and ratings, to inform your development decisions.
+- **User Item Management**: Manage user inventories and assets programmatically for efficient game management and monetization.
 
 ## Installation
 
-To install Roblox Tools, ensure you have Python 3.7 or higher, then run the following command:
+To install the necessary packages for Roblox Tools, you can use pip:
 
 ```bash
 pip install roblox-tools
@@ -19,25 +19,29 @@ pip install roblox-tools
 
 ## Basic Usage Example
 
-Here’s a simple example to get you started with uploading an asset to Roblox:
+Here’s a simple example demonstrating how to download a batch of assets and retrieve some game statistics:
 
 ```python
-from roblox_tools import RobloxAPI
+from roblox_tools import AssetDownloader, GameStats
 
-# Initialize the API with your credentials
-api = RobloxAPI(username='your_username', password='your_password')
+# Download multiple assets
+asset_ids = [123456789, 234567890, 345678901]
+downloader = AssetDownloader()
+downloader.download_assets(asset_ids)
 
-# Upload an asset
-asset_path = 'path/to/your/asset.png'
-asset_id = api.upload_asset(asset_path)
-
-print(f'Asset uploaded successfully! Asset ID: {asset_id}')
+# Fetch game statistics
+game_id = 987654321
+stats = GameStats(game_id)
+print(f"Player Count: {stats.get_player_count()}")
+print(f"Game Rating: {stats.get_rating()}")
 ```
 
-Make sure to replace `'your_username'`, `'your_password'`, and the asset path accordingly. Follow the documentation for more advanced features and functionalities.
-
-![MIT License](https://img.shields.io/badge/license-MIT-blue.svg)
+This snippet illustrates the basic capabilities of the library, showcasing how to automate asset management and retrieve vital game information effortlessly.
 
 ## License
 
-This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for more details.
+![MIT License](https://img.shields.io/badge/license-MIT-brightgreen)
+
+Roblox Tools is licensed under the MIT License. See the [LICENSE](LICENSE) file for more information. 
+
+Whether you're an aspiring game developer or a seasoned Roblox veteran, Roblox Tools provides essential utilities, making your development process smoother and more efficient.
