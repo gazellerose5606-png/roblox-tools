@@ -1,25 +1,32 @@
 import re
 
+class ValidationError(Exception):
+    pass
+
 def validate_username(username):
-    if not isinstance(username, str) or not username:
-        raise ValueError('Username must be a non-empty string')
+    if not isinstance(username, str):
+        raise ValidationError('Username must be a string')
     if len(username) < 3 or len(username) > 20:
-        raise ValueError('Username must be between 3 and 20 characters')
-    if not re.match('^[A-Za-z0-9_]+$', username):
-        raise ValueError('Username must only contain alphanumeric characters and underscores')
+        raise ValidationError('Username must be between 3 and 20 characters')
+    if not re.match('^[a-zA-Z0-9_]+$', username):
+        raise ValidationError('Username can only contain alphanumeric characters and underscores')
+    return True
 
 
 def validate_password(password):
-    if not isinstance(password, str) or len(password) < 8:
-        raise ValueError('Password must be at least 8 characters long')
-    if not re.search('[A-Z]', password) or not re.search('[a-z]', password):
-        raise ValueError('Password must contain both uppercase and lowercase letters')
-    if not re.search('[0-9]', password):
-        raise ValueError('Password must contain at least one digit')
+    if not isinstance(password, str):
+        raise ValidationError('Password must be a string')
+    if len(password) < 8:
+        raise ValidationError('Password must be at least 8 characters')
+    if not re.search('[A-Za-z]', password) or not re.search('[0-9]', password):
+        raise ValidationError('Password must contain both letters and numbers')
+    return True
 
 
 def validate_email(email):
-    if not isinstance(email, str) or not email:
-        raise ValueError('Email must be a non-empty string')
-    if not re.match('[^@]+@[^@]+\.[^@]+', email):
-        raise ValueError('Email is not valid')
+    if not isinstance(email, str):
+        raise ValidationError('Email must be a string')
+    email_regex = r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$'
+    if not re.match(email_regex, email):
+        raise ValidationError('Invalid email format')
+    return True
