@@ -1,32 +1,21 @@
 import json
+from pathlib import Path
 
 class ConfigLoader:
-    def __init__(self, default_config):
-        self.default_config = default_config
-        self.config = default_config.copy()
+    def __init__(self, config_file='config.json', defaults=None):
+        self.config_file = Path(config_file)
+        self.defaults = defaults or {}
+        self.config = self.load_config()
 
-    def load(self, filename):
-        try:
-            with open(filename, 'r') as file:
-                user_config = json.load(file)
-                self.config.update(user_config)
-        except (FileNotFoundError, json.JSONDecodeError):
-            pass  # use defaults if file not present or invalid
+    def load_config(self):
+        if self.config_file.is_file():
+            with open(self.config_file, 'r') as f:
+                return {**self.defaults, **json.load(f)}
+        return self.defaults
 
     def get(self, key, default=None):
         return self.config.get(key, default)
 
-    def set(self, key, value):
-        self.config[key] = value
-
-# Example default configuration
-DEFAULT_CONFIG = {
-    'setting1': 'value1',
-    'setting2': 10,
-    'setting3': True
-}
-
-# Usage example
-# loader = ConfigLoader(DEFAULT_CONFIG)
-# loader.load('user_config.json')
-# print(loader.get('setting1'))
+    def save(self, new_config):
+        with open(self.config_file, 'w') as f:
+            json.dump({**self.config, **new_config}, f, indent=4)
