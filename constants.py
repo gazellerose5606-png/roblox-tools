@@ -1,25 +1,24 @@
-from typing import Final
+SCREEN_WIDTH = 800
+SCREEN_HEIGHT = 600
+FPS = 60
+PLAYER_START_X = 100
+PLAYER_START_Y = 100
+MAX_PLAYERS = 10
+GAME_TITLE = 'Roblox Game'
 
-BASE_URL: Final[str] = "https://www.roblox.com"
-API_VERSION: Final[int] = 1
-DEFAULT_TIMEOUT: Final[int] = 30
+# Colors
+BLACK = (0, 0, 0)
+WHITE = (255, 255, 255)
+RED = (255, 0, 0)
+GREEN = (0, 255, 0)
+BLUE = (0, 0, 255)
 
-class GameStatus:
-    ACTIVE: Final[str] = "active"
-    INACTIVE: Final[str] = "inactive"
-    MAINTENANCE: Final[str] = "maintenance"
+# Asset Paths
+PLAYER_SPRITE_PATH = 'assets/player.png'
+ENEMY_SPRITE_PATH = 'assets/enemy.png'
+BACKGROUND_IMAGE_PATH = 'assets/background.png'
 
-class UserRoles:
-    ADMIN: Final[str] = "admin"
-    MODERATOR: Final[str] = "moderator"
-    PLAYER: Final[str] = "player"
-
-class ErrorMessages:
-    USER_NOT_FOUND: Final[str] = "User not found"
-    GAME_NOT_FOUND: Final[str] = "Game not found"
-    INVALID_REQUEST: Final[str] = "Invalid request"
-
-class Config:
-    RETRY_ATTEMPTS: Final[int] = 3
-    MAX_CONNECTIONS: Final[int] = 10
-    REQUEST_TIMEOUT: Final[int] = 15
+# Game States
+MAIN_MENU = 'main_menu'
+PLAYING = 'playing'
+GAME_OVER = 'game_over'
