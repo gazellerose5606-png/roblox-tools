@@ -1,32 +1,27 @@
 import re
 
-class InputValidator:
-    @staticmethod
-    def is_valid_username(username):
-        return isinstance(username, str) and 3 <= len(username) <= 20 and re.match("^[a-zA-Z0-9_]*$, username)
+def validate_username(username):
+    if not isinstance(username, str):
+        raise ValueError('Username must be a string')
+    if not 3 <= len(username) <= 20:
+        raise ValueError('Username must be between 3 and 20 characters')
+    if not re.match('^[a-zA-Z0-9_]*$', username):
+        raise ValueError('Username can only contain alphanumeric characters and underscores')
+    return True
 
-    @staticmethod
-    def is_valid_age(age):
-        return isinstance(age, int) and 13 <= age <= 150
 
-    @staticmethod
-    def is_valid_email(email):
-        return isinstance(email, str) and re.match("^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$", email)
+def validate_age(age):
+    if not isinstance(age, int):
+        raise ValueError('Age must be an integer')
+    if not 13 <= age <= 100:
+        raise ValueError('Age must be between 13 and 100')
+    return True
 
-class MainProcessor:
-    def process_input(self, username, age, email):
-        if not InputValidator.is_valid_username(username):
-            raise ValueError('Invalid username')
-        if not InputValidator.is_valid_age(age):
-            raise ValueError('Invalid age')
-        if not InputValidator.is_valid_email(email):
-            raise ValueError('Invalid email')
-        # Proceed with processing
-        print('Input is valid')
 
-if __name__ == '__main__':
-    processor = MainProcessor()
-    try:
-        processor.process_input('user_example', 25, 'user@example.com')
-    except ValueError as e:
-        print(e)
+def validate_email(email):
+    if not isinstance(email, str):
+        raise ValueError('Email must be a string')
+    if not re.match('^[\w\.-]+@[\w\.-]+\.\w+$', email):
+        raise ValueError('Email is not valid')
+    return True
+
