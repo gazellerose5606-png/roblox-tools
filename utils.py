@@ -1,27 +1,19 @@
-import os
 import json
-from typing import Any, Dict, List
+import requests
 
-def save_to_json(file_path: str, data: Dict[str, Any]) -> None:
-    with open(file_path, 'w') as f:
-        json.dump(data, f, indent=4)
-
-
-def load_from_json(file_path: str) -> Dict[str, Any]:
-    if not os.path.exists(file_path):
-        return {}
-    with open(file_path, 'r') as f:
-        return json.load(f)
+def get_roblox_data(asset_id):
+    url = f'https://api.roblox.com/asset/?id={asset_id}'
+    response = requests.get(url)
+    if response.status_code == 200:
+        return response.json()
+    raise ValueError('Failed to fetch data')
 
 
-def flatten_list(nested_list: List[List[Any]]) -> List[Any]:
-    return [item for sublist in nested_list for item in sublist]
+def save_to_json(data, filename):
+    with open(filename, 'w') as json_file:
+        json.dump(data, json_file, indent=4)
 
 
-def get_file_extension(file_name: str) -> str:
-    return os.path.splitext(file_name)[1]
-
-
-def read_file_lines(file_path: str) -> List[str]:
-    with open(file_path, 'r') as f:
-        return f.readlines()
+def load_from_json(filename):
+    with open(filename, 'r') as json_file:
+        return json.load(json_file)
