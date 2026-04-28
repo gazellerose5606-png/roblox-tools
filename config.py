@@ -1,21 +1,32 @@
 import json
-from pathlib import Path
+import os
 
 class ConfigLoader:
-    def __init__(self, config_file='config.json', defaults=None):
-        self.config_file = Path(config_file)
-        self.defaults = defaults or {}
-        self.config = self.load_config()
+    def __init__(self, default_config_filepath):
+        self.defaults = self.load_json(default_config_filepath)
+        self.config = self.defaults.copy()
 
-    def load_config(self):
-        if self.config_file.is_file():
-            with open(self.config_file, 'r') as f:
-                return {**self.defaults, **json.load(f)}
-        return self.defaults
+    def load_json(self, filepath):
+        if not os.path.exists(filepath):
+            return {}
+        with open(filepath, 'r') as file:
+            return json.load(file)
+
+    def update(self, custom_config_filepath):
+        custom_config = self.load_json(custom_config_filepath)
+        self.config.update(custom_config)
 
     def get(self, key, default=None):
         return self.config.get(key, default)
 
-    def save(self, new_config):
-        with open(self.config_file, 'w') as f:
-            json.dump({**self.config, **new_config}, f, indent=4)
+    def save(self, filepath):
+        with open(filepath, 'w') as file:
+            json.dump(self.config, file, indent=4)
+
+    def reset(self):
+        self.config = self.defaults.copy()
+
+# Usage Example:
+# config_loader = ConfigLoader('default_config.json')
+# config_loader.update('custom_config.json')
+# value = config_loader.get('key', 'default_value')
