@@ -1,31 +1,30 @@
 class RobloxError(Exception):
     pass
 
-class InvalidInputError(RobloxError):
-    def __init__(self, message):
-        self.message = message
-        super().__init__(self.message)
+class NotFoundError(RobloxError):
+    def __init__(self, message='Resource not found'):  
+        super().__init__(message)
 
-class ResourceNotFoundError(RobloxError):
-    def __init__(self, resource_type, resource_id):
-        self.message = f'{resource_type} with ID {resource_id} not found.'
-        super().__init__(self.message)
+class InvalidInputError(RobloxError):
+    def __init__(self, message='Invalid input provided'):  
+        super().__init__(message)
 
 class PermissionDeniedError(RobloxError):
-    def __init__(self, action):
-        self.message = f'Permission denied for action: {action}'
-        super().__init__(self.message)
+    def __init__(self, message='Permission denied'):  
+        super().__init__(message)
 
-class NetworkError(RobloxError):
-    def __init__(self, original_exception):
-        self.message = f'Network error occurred: {original_exception}'
-        super().__init__(self.message)
+class RateLimitExceededError(RobloxError):
+    def __init__(self, message='Rate limit exceeded'):  
+        super().__init__(message)
 
-class ValidationError(RobloxError):
-    def __init__(self, errors):
-        self.errors = errors
-        self.message = 'Validation failed.'
-        super().__init__(self.message)
-
-    def __str__(self):
-        return f'{self.message} Errors: {self.errors}'
+def handle_exception(exception):
+    if isinstance(exception, NotFoundError):
+        return {'error': 'Not Found', 'message': str(exception)}
+    elif isinstance(exception, InvalidInputError):
+        return {'error': 'Invalid Input', 'message': str(exception)}
+    elif isinstance(exception, PermissionDeniedError):
+        return {'error': 'Permission Denied', 'message': str(exception)}
+    elif isinstance(exception, RateLimitExceededError):
+        return {'error': 'Rate Limit Exceeded', 'message': str(exception)}
+    else:
+        return {'error': 'Unknown Error', 'message': str(exception)}
